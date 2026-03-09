@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5"/>
+<title>IHRA – Workplace Psychology Questionnaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Noto+Sans+Sinhala:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0D2137;--navy2:#1a3352;
+  --gold:#C8972A;--gold2:#E8B84B;--gold3:#f5d48a;
+  --cream:#FDFAF4;--white:#fff;
+  --text:#1a2a3a;--muted:#637082;--border:#d8e0e8;
+  --err:#c0392b;--green:#1a7a4a;--green2:#2dba68;
+  --r:14px;--shadow:0 8px 32px rgba(13,33,55,.13);
+  --tr:.2s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+
+/* ── BODY ── */
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--cream);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  display:flex;
+  flex-direction:column;
+}
+body.si{font-family:'Noto Sans Sinhala',sans-serif}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 0%,rgba(200,151,42,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%,rgba(13,33,55,.06) 0%,transparent 60%);
+}
+
+/* ── HEADER ── */
+.hdr{
+  background:var(--navy);padding:0 16px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 20px rgba(0,0,0,.28);
+  flex-shrink:0;
+}
+.hdr-in{
+  max-width:760px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:58px;gap:10px;
+}
+.logo{display:flex;align-items:center;gap:9px;min-width:0;flex:1}
+.lbadge{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:var(--navy);font-size:12px;font-family:'DM Sans',sans-serif;
+}
+.ltxt{display:flex;flex-direction:column;min-width:0}
+.ltitle{
+  color:#fff;font-family:'Playfair Display',serif;
+  font-size:13px;font-weight:700;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.lsub{color:var(--gold3);font-size:9px;letter-spacing:.4px;opacity:.85;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.hbtn{
+  background:rgba(200,151,42,.15);border:1px solid rgba(200,151,42,.35);
+  color:var(--gold2);padding:5px 11px;border-radius:20px;
+  font-size:11.5px;font-weight:600;cursor:pointer;
+  transition:var(--tr);white-space:nowrap;flex-shrink:0;
+  font-family:'DM Sans',sans-serif;
+}
+.hbtn:hover{background:rgba(200,151,42,.28)}
+
+/* ── PROGRESS BAR ── */
+#progBar{
+  background:var(--navy2);padding:9px 16px 13px;
+  position:sticky;top:58px;z-index:99;
+  flex-shrink:0;
+  /* hidden by default – shown only during quiz steps */
+  display:none;
+}
+.pb-in{max-width:760px;margin:0 auto}
+.pb-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.pb-lbl{color:rgba(255,255,255,.65);font-size:10px;letter-spacing:.7px;text-transform:uppercase;font-family:'DM Sans',sans-serif}
+.pb-sec{color:var(--gold2);font-size:10.5px;font-weight:600;font-family:'DM Sans',sans-serif}
+.pb-track{height:4px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}
+.pb-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s ease}
+
+/* ── PAGE SLOT — only one child visible at a time ── */
+#page{
+  flex:1;
+  position:relative;
+  z-index:1;
+}
+
+/* ── ALL VIEWS hidden by default ── */
+.view{display:none}
+
+/* ── LANGUAGE VIEW ── */
+#vLang{
+  display:flex;          /* shown on load */
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:40px 16px;
+  min-height:calc(100svh - 58px);
+}
+.lhero{
+  width:68px;height:68px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;font-size:26px;
+  box-shadow:0 8px 22px rgba(200,151,42,.33);
+}
+.lh1{font-family:'Playfair Display',serif;font-size:clamp(20px,5vw,28px);color:var(--navy);line-height:1.25;margin-bottom:6px}
+.lp-en{color:var(--muted);font-size:14px;margin-bottom:4px;font-family:'DM Sans',sans-serif}
+.lp-si{color:var(--muted);font-size:13px;margin-bottom:30px;font-family:'Noto Sans Sinhala',sans-serif}
+.lcards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;width:100%;max-width:380px}
+.lcard{
+  cursor:pointer;border:2px solid var(--border);border-radius:var(--r);
+  padding:22px 28px;background:#fff;transition:var(--tr);
+  box-shadow:0 2px 10px rgba(0,0,0,.06);flex:1;min-width:130px;text-align:center;
+}
+.lcard:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 22px rgba(200,151,42,.22)}
+.lflag{font-size:32px;margin-bottom:8px}
+.lname{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:3px}
+.lnative{color:var(--muted);font-size:12px}
+#lcSi .lname,#lcSi .lnative{font-family:'Noto Sans Sinhala',sans-serif}
+
+/* ── QUIZ VIEW ── */
+#vQuiz{
+  max-width:760px;margin:0 auto;
+  padding:20px 14px 0;
+}
+
+/* Section card */
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(13,33,55,.06)}
+.card-hd{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:16px 18px;display:flex;align-items:flex-start;gap:12px}
+.sbadge{
+  width:34px;height:34px;border-radius:8px;flex-shrink:0;margin-top:1px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:var(--navy);font-size:14px;font-family:'DM Sans',sans-serif;
+}
+.stitle{color:#fff;font-family:'Playfair Display',serif;font-size:16px;line-height:1.3}
+.ssub{color:rgba(255,255,255,.55);font-size:11px;margin-top:3px;line-height:1.4;font-family:'DM Sans',sans-serif}
+.card-bd{padding:18px 16px}
+.cnote{
+  background:rgba(200,151,42,.08);border-left:3px solid var(--gold);
+  border-radius:0 6px 6px 0;padding:9px 12px;
+  font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.5;
+}
+
+/* Questions */
+.qb{margin-bottom:22px}
+.qb:last-of-type{margin-bottom:0}
+.ql{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:10px;line-height:1.5}
+.qnum{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--navy);color:#fff;
+  font-size:10px;font-weight:700;font-family:'DM Sans',sans-serif;
+  margin-right:6px;flex-shrink:0;vertical-align:middle;
+}
+
+/* Radio pills */
+.rg{display:grid;gap:7px}
+.rg.c2{grid-template-columns:1fr 1fr}
+@media(max-width:450px){.rg.c2{grid-template-columns:1fr}}
+.rp{
+  display:flex;align-items:center;gap:9px;padding:10px 12px;
+  border-radius:8px;border:1.5px solid var(--border);cursor:pointer;
+  transition:var(--tr);background:var(--cream);font-size:13.5px;
+  -webkit-user-select:none;user-select:none;
+}
+.rp:hover{border-color:var(--gold2);background:#fffbf2}
+.rdot{width:17px;height:17px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:var(--tr);position:relative}
+.rp.on{border-color:var(--gold);background:linear-gradient(135deg,#fffbf2,#fff8e8);box-shadow:0 2px 8px rgba(200,151,42,.13)}
+.rp.on .rdot{border-color:var(--gold);background:var(--gold);box-shadow:0 0 0 3px rgba(200,151,42,.17)}
+.rp.on .rdot::after{content:'';position:absolute;inset:3px;border-radius:50%;background:#fff}
+.rlbl{line-height:1.35;font-size:13.5px}
+
+/* Text input */
+.tinp{
+  width:100%;padding:11px 13px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:14px;background:var(--cream);color:var(--text);
+  transition:var(--tr);outline:none;font-family:inherit;
+}
+.tinp:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(200,151,42,.10)}
+.tinp::placeholder{color:#aab4be}
+textarea.tinp{resize:vertical;min-height:94px;line-height:1.6}
+
+/* Likert */
+.sleg{display:flex;justify-content:space-between;background:rgba(13,33,55,.04);border-radius:8px;padding:7px 10px;margin-bottom:12px}
+.sleg span{font-size:11px;color:var(--muted);font-weight:500;font-family:'DM Sans',sans-serif}
+.li{padding:13px 0;border-bottom:1px solid rgba(13,33,55,.05)}
+.li:last-child{border-bottom:none;padding-bottom:0}
+.liq{font-size:13.5px;font-weight:500;color:var(--text);margin-bottom:8px;line-height:1.5}
+.lrow{display:flex;gap:5px}
+.lbtn{
+  flex:1;height:40px;border-radius:8px;border:1.5px solid var(--border);
+  background:var(--cream);cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);
+  transition:var(--tr);display:flex;align-items:center;justify-content:center;
+  font-family:'DM Sans',sans-serif;-webkit-appearance:none;touch-action:manipulation;
+  -webkit-user-select:none;user-select:none;
+}
+.lbtn:hover{border-color:var(--gold2);color:var(--gold);background:#fffbf2}
+.lbtn.on{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border-color:var(--gold);color:var(--navy);
+  box-shadow:0 3px 10px rgba(200,151,42,.26);transform:scale(1.06);
+}
+
+/* Checkboxes — div based, no label, no double-fire */
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+@media(max-width:450px){.cg{grid-template-columns:1fr}}
+.ci{
+  display:flex;align-items:center;gap:9px;padding:10px 12px;
+  border-radius:8px;border:1.5px solid var(--border);cursor:pointer;
+  background:var(--cream);transition:var(--tr);font-size:13.5px;
+  -webkit-user-select:none;user-select:none;
+}
+.ci:hover{border-color:var(--gold2);background:#fffbf2}
+.ci.on{border-color:var(--gold);background:#fffbf2}
+.cbox{
+  width:17px;height:17px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;
+  transition:var(--tr);display:flex;align-items:center;justify-content:center;
+}
+.ci.on .cbox{background:var(--gold);border-color:var(--gold)}
+.ctick{color:var(--navy);font-size:10px;font-weight:800;opacity:0;transition:var(--tr);font-family:'DM Sans',sans-serif}
+.ci.on .ctick{opacity:1}
+.clbl{line-height:1.35;font-size:13.5px}
+
+/* Nav buttons */
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px}
+.btn{
+  padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;
+  cursor:pointer;border:none;transition:var(--tr);
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:inherit;-webkit-appearance:none;touch-action:manipulation;
+  white-space:nowrap;line-height:1;
+}
+.bbk{background:transparent;color:var(--muted);border:1.5px solid var(--border)}
+.bbk:hover{border-color:var(--navy);color:var(--navy)}
+.bnx{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;margin-left:auto;box-shadow:0 4px 13px rgba(13,33,55,.2)}
+.bnx:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(13,33,55,.27)}
+.bsb{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);margin-left:auto;box-shadow:0 4px 13px rgba(200,151,42,.26)}
+.bsb:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(200,151,42,.36)}
+
+/* Error */
+.emsg{background:#fef2f2;border-left:3px solid var(--err);border-radius:0 6px 6px 0;padding:9px 12px;font-size:12px;color:var(--err);margin-top:13px;display:none;line-height:1.5}
+.emsg.on{display:block}
+
+/* ── SUCCESS VIEW ── */
+#vSuc{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:40px 16px;
+  min-height:calc(100svh - 58px);
+}
+.succard{
+  background:#fff;border-radius:20px;box-shadow:0 16px 50px rgba(13,33,55,.14);
+  padding:36px 28px;max-width:430px;width:100%;border:1px solid rgba(200,151,42,.14);
+  animation:cpop .45s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes cpop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:scale(1)}}
+.sicwrap{width:76px;height:76px;margin:0 auto 20px;position:relative}
+.siring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--gold) 0%,rgba(200,151,42,.08) 100%);animation:sr 3s linear infinite}
+@keyframes sr{to{transform:rotate(360deg)}}
+.siring2{position:absolute;inset:3px;border-radius:50%;background:var(--cream)}
+.scirc{
+  position:absolute;inset:9px;border-radius:50%;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  display:flex;align-items:center;justify-content:center;
+  animation:cpop2 .4s cubic-bezier(.34,1.56,.64,1) .2s both;
+}
+@keyframes cpop2{from{transform:scale(0)}to{transform:scale(1)}}
+.scirc svg{width:26px;height:26px;stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ckpath{stroke-dasharray:36;stroke-dashoffset:36;animation:dc .45s ease .55s forwards}
+@keyframes dc{to{stroke-dashoffset:0}}
+.suctitle{font-family:'Playfair Display',serif;font-size:clamp(20px,5vw,24px);color:var(--navy);margin-bottom:10px}
+.sucbody{color:var(--muted);font-size:14px;line-height:1.7}
+
+/* ── CONFETTI ── */
+#cfw{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden;display:none}
+#cfw.on{display:block}
+.cp{position:absolute;top:-14px;opacity:0;animation:cfall linear forwards}
+@keyframes cfall{0%{opacity:1;transform:translateY(0) rotate(0deg)}80%{opacity:.8}100%{opacity:0;transform:translateY(110vh) rotate(720deg)}}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;padding:16px 14px;color:var(--muted);font-size:11px;
+  border-top:1px solid var(--border);line-height:1.8;
+  font-family:'DM Sans',sans-serif;flex-shrink:0;
+  position:relative;z-index:1;
+}
+footer a{color:var(--gold);text-decoration:none}
+
+/* ── LOADING OVERLAY ── */
+#ov{
+  position:fixed;inset:0;background:rgba(13,33,55,.58);
+  backdrop-filter:blur(4px);display:none;
+  align-items:center;justify-content:center;
+  z-index:999;flex-direction:column;gap:14px;
+}
+#ov.on{display:flex}
+.spin{width:42px;height:42px;border-radius:50%;border:3px solid rgba(200,151,42,.22);border-top-color:var(--gold);animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ovtxt{color:#fff;font-size:14px;font-family:'DM Sans',sans-serif}
+
+/* ── MOBILE ── */
+@media(max-width:520px){
+  .lsub{display:none}
+  .card-bd{padding:14px 12px}
+  .card-hd{padding:13px 14px}
+  .btn{padding:11px 16px;font-size:13px}
+  .lbtn{height:38px;font-size:12px}
+  .succard{padding:26px 16px}
+  .nav{margin-top:16px;gap:8px}
+}
+@media(max-width:360px){
+  .lbtn{height:36px;font-size:11.5px;border-radius:6px}
+  .btn{padding:10px 13px;font-size:12.5px}
+  .card-bd{padding:12px 10px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER — always visible -->
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="logo">
+      <div class="lbadge">IHRA</div>
+      <div class="ltxt">
+        <div class="ltitle">IHRA – University of Colombo</div>
+        <div class="lsub">WORKPLACE PSYCHOLOGY QUESTIONNAIRE</div>
+      </div>
+    </div>
+    <button class="hbtn" onclick="onHdrLang()">🌐 සිංහල / EN</button>
+  </div>
+</header>
+
+<!-- PROGRESS BAR — hidden until quiz starts -->
+<div id="progBar">
+  <div class="pb-in">
+    <div class="pb-meta">
+      <span class="pb-lbl" id="pbLbl">STEP 1 OF 7</span>
+      <span class="pb-sec" id="pbSec">Basic Info</span>
+    </div>
+    <div class="pb-track"><div class="pb-fill" id="pbFill" style="width:14%"></div></div>
+  </div>
+</div>
+
+<!-- CONFETTI -->
+<div id="cfw"></div>
+
+<!-- ════════════════════════════════════
+     PAGE SLOT — one view shown at a time
+════════════════════════════════════ -->
+<div id="page">
+
+  <!-- ── VIEW: Language selection ── -->
+  <div id="vLang" class="view">
+    <div class="lhero">🛡️</div>
+    <div class="lh1">Workplace Psychology Survey</div>
+    <div class="lp-en">Please select your preferred language to continue.</div>
+    <div class="lp-si">කරුණාකර ඔබ කැමති භාෂාව තෝරා ඉදිරියට යන්න.</div>
+    <div class="lcards">
+      <div class="lcard" id="lcEn" onclick="startSurvey('en')">
+        <div class="lflag">🇬🇧</div>
+        <div class="lname">English</div>
+        <div class="lnative">Continue in English</div>
+      </div>
+      <div class="lcard" id="lcSi" onclick="startSurvey('si')">
+        <div class="lflag">🇱🇰</div>
+        <div class="lname">සිංහල</div>
+        <div class="lnative">සිංහලෙන් ඉදිරියට යන්න</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VIEW: Quiz (sections rendered here by JS) ── -->
+  <div id="vQuiz" class="view">
+    <!-- JS renders the current section card here -->
+  </div>
+
+  <!-- ── VIEW: Success ── -->
+  <div id="vSuc" class="view">
+    <div class="succard">
+      <div class="sicwrap">
+        <div class="siring"></div>
+        <div class="siring2"></div>
+        <div class="scirc">
+          <svg viewBox="0 0 24 24"><path class="ckpath" d="M5 13l4 4L19 7"/></svg>
+        </div>
+      </div>
+      <div class="suctitle" id="sucT"></div>
+      <div class="sucbody"  id="sucB"></div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- FOOTER — always visible -->
+<footer>
+  © 2025 BLM Batch Group 5 &nbsp;|&nbsp;
+  Survey Design: <a href="#">Thilina Jayasooriya</a> &nbsp;|&nbsp;
+  System Design: <a href="#">Thinith Madara</a>
+</footer>
+
+<!-- LOADING OVERLAY -->
+<div id="ov"><div class="spin"></div><div class="ovtxt" id="ovTxt">Submitting...</div></div>
+
+<!-- ════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────
+   CONTENT  (EN + SI fully separate)
+───────────────────────────────── */
+const C = {
+  en:{
+    step:'STEP', of:'OF',
+    secNames:['','Basic Info','Org. Culture','Leadership','Motivation','Satisfaction','Issues','Comments'],
+    /* Section A */
+    tA:'Basic Information', subA:'Confidential – Do not write your name',
+    cnote:'🔒 Your responses are completely confidential and anonymous.',
+    lq1:'Designation Level',
+    q1vals:['Management','Executive','Field/Sales','Support/Admin'],
+    q1opts:['Management','Executive','Field / Sales','Support / Admin'],
+    q1oph:'Other...',
+    lq2:'Service Period',
+    q2vals:['Less than 1 year','1-3 years','4-5 years','Over 6 years'],
+    q2opts:['Less than 1 year','1 – 3 years','4 – 5 years','Over 6 years'],
+    lq3:'Department', q3ph:'Enter your department',
+    /* Sections B-E */
+    tB:'Organizational Culture', tC:'Leadership Style',
+    tD:'Motivation & Incentives', tE:'Employee Satisfaction',
+    scaleSubEn:'1 = Strongly Disagree  |  5 = Strongly Agree',
+    scL:'Strongly Disagree', scH:'Strongly Agree',
+    B:['Office communication is clear.',
+       'Teamwork is prioritized.',
+       'A culture of appreciation exists.',
+       'Rules and procedures are fair.',
+       'Problems can be openly discussed.'],
+    C:['Leaders provide clear guidance.',
+       'Getting support from leaders is easy.',
+       'Opportunities exist to express ideas.',
+       'Leaders make fair decisions.',
+       'Feedback is provided regularly.'],
+    D:['Salary and benefits are satisfactory.',
+       'Job performance is recognized and valued.',
+       'Training / professional development opportunities exist.',
+       'The promotion process is clear.',
+       'Support for work-life balance is provided.'],
+    E:['I am satisfied with my job.',
+       'I am proud to work here.',
+       'Stress is manageable at work.',
+       'I intend to work here long-term.',
+       'The overall work environment is good.'],
+    /* Section F */
+    tF:'Workplace Issues', subF:'Select all that apply',
+    fOpts:['Excessive Workload','Communication Problems','Limited Promotion Opportunities',
+           'Lack of Leadership Support','Salary / Benefit Dissatisfaction','Team Conflicts','Stress / Burnout'],
+    foph:'Other...',
+    /* Section G */
+    tG:'Open Comments', subG:'Optional – Your suggestions',
+    gLbl:'Your suggestions to improve the work environment:',
+    gph:'Write your suggestions here...',
+    /* buttons / messages */
+    back:'Back', next:'Next', sub:'Submit Response',
+    eA:'Please select your designation level and service period before proceeding.',
+    eB:'Please rate all questions in this section before proceeding.',
+    loading:'Submitting your response...',
+    sucT:'Thank You!',
+    sucB:'Your response has been recorded successfully. Your feedback is valuable for improving workplace psychology in insurance organizations.'
+  },
+  si:{
+    step:'පියවර', of:'න්',
+    secNames:['','මූලික තොරතුරු','සංවිධාන සංස්කෘතිය','නායකත්ව','උද්‍යෝගීකරණය','සේවක තෘප්තිය','ගැටළු','අදහස්'],
+    tA:'මූලික තොරතුරු', subA:'රහසිගතයි — ඔබගේ නාමය ලිවිය යුතු නැත',
+    cnote:'🔒 ඔබගේ පිළිතුරු සම්පූර්ණයෙන්ම රහසිගතයි.',
+    lq1:'ඔබගේ සේවා මට්ටම',
+    q1vals:['Management','Executive','Field/Sales','Support/Admin'],
+    q1opts:['කළමනාකාර මට්ටම','නිලධාරී මට්ටම','ක්ෂේත්‍රගත/විකුණුම් සේවක','සහායක/පරිපාලන'],
+    q1oph:'වෙනත්...',
+    lq2:'සේවා කාලය',
+    q2vals:['Less than 1 year','1-3 years','4-5 years','Over 6 years'],
+    q2opts:['අවුරුදු 1ට අඩු','අවුරුදු 1–3','අවුරුදු 4–5','අවුරුදු 6ට වැඩි'],
+    lq3:'ඔබ සේවය කරන අංශය', q3ph:'ඔබ සේවය කරන අංශය ලියන්න',
+    tB:'සංවිධාන සංස්කෘතිය', tC:'නායකත්ව ශෛලීන්',
+    tD:'උද්‍යෝගීකරණය සහ දිරිගැන්වීම්', tE:'සේවක තෘප්තිය',
+    scaleSubEn:'1 = සම්පූර්ණයෙන් එකඟ නොවේ  |  5 = සම්පූර්ණයෙන් එකඟයි',
+    scL:'සම්පූර්ණයෙන් එකඟ නොවේ', scH:'සම්පූර්ණයෙන් එකඟයි',
+    B:['කාර්යාලයේ සන්නිවේදනය පැහැදිලියි.',
+       'කණ්ඩායම් රාජකාරි සඳහා ප්‍රමුඛතාවය දෙනවා.',
+       'අගය කිරීමේ සංස්කෘතියක් පවතිනවා.',
+       'නීති හා ක්‍රියාපටිපාටීන් සාධාරණයි.',
+       'ගැටළු විවෘතව සාකච්ඡා කළ හැක.'],
+    C:['ප්‍රධානීන් පැහැදිලි මාර්ගෝපදේශ ලබාදේ.',
+       'ප්‍රධානීන්ගේ සහය ලබාගැනීම පහසුයි.',
+       'අදහස් ප්‍රකාශ කිරීමට අවස්ථා තියෙනවා.',
+       'ප්‍රධානීන් සාධාරණ තීරණ ගන්නවා.',
+       'ප්‍රතිපෝෂණ ලබාදෙනවා.'],
+    D:['වැටුප් හා ප්‍රතිලාභ සතුටුදායකයි.',
+       'කාර්ය සාධනය අගය කරනු ලබයි.',
+       'පුහුණු/වෘත්තීය සංවර්ධන අවස්ථා ඇත.',
+       'උසස්වීම් ක්‍රමවේදය පැහැදිලියි.',
+       'වැඩ–ජීවිත සමතුලිතතාවයට සහාය ඇත.'],
+    E:['මගේ රැකියාව පිළිබඳ මම තෘප්තිමත් වේ.',
+       'මෙහි වැඩ කිරීම ගැන ආඩම්බරයි.',
+       'ආතතිය කළමනාකරණය කළ හැක.',
+       'දිගුකාලීනව මෙහි සේවය කිරීමට කැමතියි.',
+       'සමස්ත සේවා පරිසරය හොඳයි.'],
+    tF:'සේවාස්ථාන ගැටළු', subF:'අදාළ සියල්ල තෝරන්න',
+    fOpts:['වැඩ බර අධිකයි','සන්නිවේදන ගැටළු','උසස්වීම් අවස්ථා සීමිතයි',
+           'නායකත්ව සහය අඩුයි','වැටුප්/ප්‍රතිලාභ අප්‍රසාදය','කණ්ඩායම් ගැටළු','ආතතිය/බර්න්අවුට්'],
+    foph:'වෙනත්...',
+    tG:'කෙටි අදහස්', subG:'විකල්ප — ඔබගේ යෝජනා',
+    gLbl:'වැඩ පරිසරය වැඩිදියුණු කිරීමට ඔබගේ යෝජනා:',
+    gph:'ඔබගේ යෝජනා මෙහි ලියන්න...',
+    back:'ආපසු', next:'ඉදිරියට', sub:'ඉදිරිපත් කරන්න',
+    eA:'කරුණාකර ඔබගේ සේවා මට්ටම සහ සේවා කාලය තෝරන්න.',
+    eB:'කරුණාකර සියලු ප්‍රශ්නවලට ලකුණු ලබාදෙන්න.',
+    loading:'ඔබගේ පිළිතුරු ගබඩා කරමින්...',
+    sucT:'ස්තූතියි!',
+    sucB:'ඔබගේ පිළිතුරු සාර්ථකව ලියාපදිංචි කෙරිණි. ඔබගේ ප්‍රතිපෝෂණය රක්ෂණ ආයතනවල සේවාස්ථාන මනෝවිද්‍යාව වැඩිදියුණු කිරීමට ඉතා වටිනවා.'
+  }
+};
+
+/* Sections F checkbox IDs */
+const FIDS = ['f_overwork','f_communication','f_limited_promotion',
+              'f_lack_leadership','f_salary_dissatisfaction','f_team_conflicts','f_burnout'];
+/* Likert section → start Q number */
+const SS = {B:4, C:9, D:14, E:19};
+/* Confetti colours */
+const CC = ['#C8972A','#E8B84B','#f5d48a','#1a3352','#4a90d9','#2dba68','#e74c3c','#9b59b6','#fff'];
+
+/* ─────────────────────────────────
+   STATE
+───────────────────────────────── */
+let lang  = 'en';   /* chosen language */
+let step  = 0;      /* 0=lang, 1-7=sections, 8=success */
+const ans = {};     /* collected answers */
+
+/* ─────────────────────────────────
+   VIEW SWITCHER — the ONLY place
+   that shows/hides views.
+   vLang / vQuiz / vSuc are the
+   three possible views in #page.
+───────────────────────────────── */
+const VIEWS = ['vLang','vQuiz','vSuc'];
+
+function showView(id) {
+  /* Hide every view */
+  VIEWS.forEach(v => {
+    const el = document.getElementById(v);
+    el.style.display = 'none';
+  });
+  /* Show only the requested one */
+  const target = document.getElementById(id);
+  if (!target) return;
+
+  if (id === 'vLang') {
+    target.style.display = 'flex';
+  } else if (id === 'vQuiz') {
+    target.style.display = 'block';
+  } else if (id === 'vSuc') {
+    target.style.display = 'flex';
+  }
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+/* ─────────────────────────────────
+   LANGUAGE SELECTION
+───────────────────────────────── */
+function startSurvey(l) {
+  lang = l;
+  if (l === 'si') document.body.classList.add('si');
+  else            document.body.classList.remove('si');
+  goToStep(1);
+}
+
+/* Header lang button — only active while inside quiz */
+function onHdrLang() {
+  if (step === 0) return; /* already on lang screen */
+  if (step === 8) return; /* already done */
+  const msg = lang === 'si'
+    ? 'භාෂාව මාරු කිරීමට ආපසු යන්නද? සියලු පිළිතුරු මකා දැමෙනු ඇත.'
+    : 'Switch language? All answers will be cleared.';
+  if (confirm(msg)) resetAll();
+}
+
+/* ─────────────────────────────────
+   STEP ROUTER
+   step 0  → language screen
+   step 1-7→ quiz sections
+   step 8  → success
+───────────────────────────────── */
+function goToStep(n) {
+  step = n;
+  if (n === 0) {
+    document.getElementById('progBar').style.display = 'none';
+    showView('vLang');
+  } else if (n >= 1 && n <= 7) {
+    document.getElementById('progBar').style.display = 'block';
+    renderSection(n);
+    showView('vQuiz');
+    setProgress(n);
+  } else if (n === 8) {
+    document.getElementById('progBar').style.display = 'none';
+    showView('vSuc');
+    fireworks();
+  }
+}
+
+function setProgress(n) {
+  const L = C[lang];
+  document.getElementById('pbFill').style.width = Math.round(n/7*100)+'%';
+  document.getElementById('pbLbl').textContent  = L.step+' '+n+' '+L.of+' 7';
+  document.getElementById('pbSec').textContent  = L.secNames[n]||'';
+}
+
+/* ─────────────────────────────────
+   SECTION RENDERER
+   Builds HTML and injects into #vQuiz
+───────────────────────────────── */
+function renderSection(n) {
+  const L = C[lang];
+  let html = '';
+
+  if (n === 1) html = buildA(L);
+  else if (n === 2) html = buildLikert('B', L.tB, L);
+  else if (n === 3) html = buildLikert('C', L.tC, L);
+  else if (n === 4) html = buildLikert('D', L.tD, L);
+  else if (n === 5) html = buildLikert('E', L.tE, L);
+  else if (n === 6) html = buildF(L);
+  else if (n === 7) html = buildG(L);
+
+  document.getElementById('vQuiz').innerHTML =
+    `<div style="max-width:760px;margin:0 auto;padding:20px 14px 0">${html}</div>`;
+}
+
+/* ── Section A HTML ── */
+function buildA(L) {
+  const q1rows = L.q1opts.map((lbl,i) => {
+    const v   = L.q1vals[i];
+    const sel = ans.q01===v ? ' on':'';
+    return `<div class="rp${sel}" data-n="q01" data-v="${v}" onclick="pickR(this)">
+      <span class="rdot"></span><span class="rlbl">${lbl}</span></div>`;
+  }).join('');
+
+  const q2rows = L.q2opts.map((lbl,i) => {
+    const v   = L.q2vals[i];
+    const sel = ans.q02===v ? ' on':'';
+    return `<div class="rp${sel}" data-n="q02" data-v="${v}" onclick="pickR(this)">
+      <span class="rdot"></span><span class="rlbl">${lbl}</span></div>`;
+  }).join('');
+
+  return `<div class="card">
+    <div class="card-hd">
+      <div class="sbadge">A</div>
+      <div><div class="stitle">${L.tA}</div><div class="ssub">${L.subA}</div></div>
+    </div>
+    <div class="card-bd">
+      <div class="cnote">${L.cnote}</div>
+      <div class="qb">
+        <div class="ql"><span class="qnum">1</span>${L.lq1}</div>
+        <div class="rg c2">${q1rows}</div>
+        <input type="text" id="q01other" class="tinp" style="margin-top:8px" placeholder="${L.q1oph}" value="${ans.q01_other||''}"/>
+      </div>
+      <div class="qb">
+        <div class="ql"><span class="qnum">2</span>${L.lq2}</div>
+        <div class="rg c2">${q2rows}</div>
+      </div>
+      <div class="qb">
+        <div class="ql"><span class="qnum">3</span>${L.lq3}</div>
+        <input type="text" id="q03" class="tinp" placeholder="${L.q3ph}" value="${ans.q03||''}"/>
+      </div>
+      <div class="emsg" id="err"></div>
+      <div class="nav">
+        <button class="btn bbk" onclick="navBack()">&larr; ${L.back}</button>
+        <button class="btn bnx" onclick="navNext()">${L.next} &rarr;</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ── Likert section HTML ── */
+function buildLikert(sec, title, L) {
+  const qs  = L[sec];
+  const st  = SS[sec];
+  const items = qs.map((q,i) => {
+    const id  = 'q'+pad(st+i);
+    const btns = [1,2,3,4,5].map(n =>
+      `<button type="button" class="lbtn${ans[id]===n?' on':''}"
+         onclick="pickL('${id}',${n},this)">${n}</button>`
+    ).join('');
+    return `<div class="li">
+      <div class="liq"><span class="qnum">${st+i}</span>${q}</div>
+      <div class="lrow" id="row${id}">${btns}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="card">
+    <div class="card-hd">
+      <div class="sbadge">${sec}</div>
+      <div><div class="stitle">${title}</div><div class="ssub">${L.scaleSubEn}</div></div>
+    </div>
+    <div class="card-bd">
+      <div class="sleg"><span>${L.scL}</span><span>${L.scH}</span></div>
+      ${items}
+      <div class="emsg" id="err"></div>
+      <div class="nav">
+        <button class="btn bbk" onclick="navBack()">&larr; ${L.back}</button>
+        <button class="btn bnx" onclick="navNext()">${L.next} &rarr;</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ── Section F HTML ── */
+function buildF(L) {
+  const items = L.fOpts.map((lbl,i) => {
+    const id  = FIDS[i];
+    const on  = ans[id] ? ' on':'';
+    return `<div class="ci${on}" data-fid="${id}" onclick="pickF(this)">
+      <span class="cbox"><span class="ctick">✓</span></span>
+      <span class="clbl">${lbl}</span></div>`;
+  }).join('');
+
+  return `<div class="card">
+    <div class="card-hd">
+      <div class="sbadge">F</div>
+      <div><div class="stitle">${L.tF}</div><div class="ssub">${L.subF}</div></div>
+    </div>
+    <div class="card-bd">
+      <div class="cg">${items}</div>
+      <input type="text" id="fother" class="tinp" style="margin-top:11px"
+             placeholder="${L.foph}" value="${ans.f_other||''}"/>
+      <div class="nav">
+        <button class="btn bbk" onclick="navBack()">&larr; ${L.back}</button>
+        <button class="btn bnx" onclick="navNext()">${L.next} &rarr;</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ── Section G HTML ── */
+function buildG(L) {
+  return `<div class="card">
+    <div class="card-hd">
+      <div class="sbadge">G</div>
+      <div><div class="stitle">${L.tG}</div><div class="ssub">${L.subG}</div></div>
+    </div>
+    <div class="card-bd">
+      <div class="qb">
+        <div class="ql">${L.gLbl}</div>
+        <textarea id="g_suggestions" class="tinp" placeholder="${L.gph}">${ans.g_suggestions||''}</textarea>
+      </div>
+      <div class="nav">
+        <button class="btn bbk" onclick="navBack()">&larr; ${L.back}</button>
+        <button class="btn bsb" onclick="doSubmit()">${L.sub}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+/* ─────────────────────────────────
+   INTERACTIONS
+───────────────────────────────── */
+function pickR(el) {
+  /* deselect siblings in same grid */
+  el.closest('.rg').querySelectorAll('.rp').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  ans[el.dataset.n] = el.dataset.v;
+}
+
+function pickL(id, val, btn) {
+  document.getElementById('row'+id).querySelectorAll('.lbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  ans[id] = val;
+}
+
+/* Plain div checkbox — no <label>, no double-fire */
+function pickF(el) {
+  el.classList.toggle('on');
+  ans[el.dataset.fid] = el.classList.contains('on');
+}
+
+/* ─────────────────────────────────
+   NAVIGATION
+───────────────────────────────── */
+function navNext() {
+  const L = C[lang];
+
+  /* ── Validate section A ── */
+  if (step === 1) {
+    const hasDesig = ans.q01 || (document.getElementById('q01other')?.value.trim());
+    if (!hasDesig || !ans.q02) {
+      showErr(L.eA); return;
+    }
+    ans.q01_other = document.getElementById('q01other')?.value.trim() || '';
+    ans.q03       = document.getElementById('q03')?.value.trim() || '';
+  }
+
+  /* ── Validate Likert sections ── */
+  const secMap = {2:'B', 3:'C', 4:'D', 5:'E'};
+  if (secMap[step]) {
+    const st = SS[secMap[step]];
+    const ct = C[lang][secMap[step]].length;
+    for (let i = 0; i < ct; i++) {
+      if (!ans['q'+pad(st+i)]) { showErr(L.eB); return; }
+    }
+  }
+
+  /* ── Save section F other text ── */
+  if (step === 6) {
+    ans.f_other = document.getElementById('fother')?.value.trim() || '';
+  }
+
+  goToStep(step + 1);
+}
+
+function navBack() {
+  if (step === 1) {
+    /* Go back to language selection */
+    goToStep(0);
+  } else {
+    goToStep(step - 1);
+  }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('err');
+  if (el) { el.textContent = '⚠️  ' + msg; el.classList.add('on'); }
+}
+
+/* ─────────────────────────────────
+   SUBMIT
+───────────────────────────────── */
+function doSubmit() {
+  /* Save section G text */
+  ans.g_suggestions = document.getElementById('g_suggestions')?.value.trim() || '';
+  ans.language = lang === 'si' ? 'Sinhala' : 'English';
+  FIDS.forEach(id => { if (ans[id] === undefined) ans[id] = false; });
+
+  /* Show loading */
+  document.getElementById('ovTxt').textContent = C[lang].loading;
+  document.getElementById('ov').classList.add('on');
+
+  if (typeof google !== 'undefined' && google.script) {
+    /* Inside Google Apps Script */
+    google.script.run
+      .withSuccessHandler(onOK)
+      .withFailureHandler(onFail)
+      .submitResponse(ans);
+  } else {
+    const URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+    if (URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') {
+      /* Demo / GitHub pages mode — simulate submit */
+      setTimeout(onOK, 900);
+    } else {
+      fetch(URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(ans),
+        mode:'no-cors'
+      }).then(onOK).catch(onFail);
+    }
+  }
+}
+
+function onOK() {
+  document.getElementById('ov').classList.remove('on');
+  /* Fill success text */
+  document.getElementById('sucT').textContent = C[lang].sucT;
+  document.getElementById('sucB').textContent = C[lang].sucB;
+  goToStep(8);
+}
+
+function onFail(err) {
+  document.getElementById('ov').classList.remove('on');
+  alert((lang==='si' ? 'දෝෂයක් ඇති විය.\n' : 'Error. Please try again.\n') + (err?.message || err));
+}
+
+/* ─────────────────────────────────
+   CONFETTI
+───────────────────────────────── */
+function fireworks() {
+  const w = document.getElementById('cfw');
+  w.innerHTML = '';
+  w.classList.add('on');
+  for (let i = 0; i < 110; i++) {
+    const p   = document.createElement('div');
+    p.className = 'cp';
+    const sz  = 6 + Math.random() * 9;
+    const sh  = ['2px','50%','0px'][Math.floor(Math.random()*3)];
+    p.style.cssText = `left:${Math.random()*100}vw;background:${CC[Math.floor(Math.random()*CC.length)]};width:${sz}px;height:${sz*(0.5+Math.random())}px;border-radius:${sh};animation-delay:${Math.random()*1.6}s;animation-duration:${2.4+Math.random()*2}s;`;
+    w.appendChild(p);
+  }
+  setTimeout(() => { w.classList.remove('on'); w.innerHTML = ''; }, 6200);
+}
+
+/* ─────────────────────────────────
+   RESET
+───────────────────────────────── */
+function resetAll() {
+  Object.keys(ans).forEach(k => delete ans[k]);
+  document.body.classList.remove('si');
+  document.getElementById('cfw').classList.remove('on');
+  goToStep(0);
+}
+
+/* ─────────────────────────────────
+   INIT — show language screen only
+───────────────────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  /* Start with everything hidden, then show language view */
+  VIEWS.forEach(v => {
+    document.getElementById(v).style.display = 'none';
+  });
+  goToStep(0);
+});
+</script>
+</body>
+</html>
